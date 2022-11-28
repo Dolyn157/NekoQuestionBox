@@ -16,6 +16,9 @@ var DB *gorm.DB
 //go:embed questions.sql
 var questionSql string
 
+//go:embed users.sql
+var usersSql string
+
 // 初始化数据库
 func InitDB() {
 	dialector := postgres.Open(fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=Asia/Shanghai",
@@ -37,6 +40,10 @@ func InitDBTest() {
 	InitDB()
 	// 删除然后重新建表
 	err := DB.Exec(questionSql).Error
+	if err != nil {
+		panic(err)
+	}
+	err = DB.Exec(usersSql).Error
 	if err != nil {
 		panic(err)
 	}

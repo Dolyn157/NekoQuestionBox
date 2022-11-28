@@ -18,6 +18,18 @@ var (
 	ErrQuestionExists   = errors.New("问题已存在")
 )
 
+// 获取用户信息
+
+func GetUser(userName string) (types.User, error) {
+	user := &types.User{}
+	err := database.DB.Model(user).Where("username = ?", userName).First(user).Error
+	if err != nil && !database.IsNoRecordFoundError(err) {
+		return types.User{}, err
+	}
+	return *user, err
+
+}
+
 // 获取所有的问题
 func GetAllQuestions() ([]types.Question, error) {
 	questions := make([]types.Question, 0)

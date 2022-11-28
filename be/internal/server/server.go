@@ -19,7 +19,9 @@ func InitServer() *gin.Engine {
 		}
 		ctx.Next()
 	})
-	api.Handlers().Install(r.Group(""))
-
+	api.OtherHandlers().Install(r.Group(""))
+	qGroup := r.Group("question")
+	qGroup.Use()
+	api.QuestionHandlers().Install(qGroup)
 	return r
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"neko-question-box-be/internal/config"
+	"neko-question-box-be/internal/database/types"
 	"neko-question-box-be/internal/logger"
 	"neko-question-box-be/internal/services"
 	"neko-question-box-be/pkg/handler"
@@ -119,7 +120,19 @@ func getPing(ctx *gin.Context) (handler.HandlerResponse, error) {
 	return nil, nil
 }
 
-func Handlers() handler.HandlerGroup {
+func AuthLogin(ctx *gin.Context) (handler.HandlerResponse, error) {
+	var userProfile types.User
+	err := ctx.ShouldBind(&userProfile)
+	if err != nil {
+		return nil, handler.ErrParams
+	}
+
+	//从数据库中提取用户信息。
+
+	return nil, nil
+}
+
+func OtherHandlers() handler.HandlerGroup {
 	return handler.HandlerGroup{
 		Name: "",
 		Group: map[string][]handler.Handler{
@@ -128,11 +141,22 @@ func Handlers() handler.HandlerGroup {
 				handler.NewHandler(http.MethodGet, getCaptchaImage),
 			},
 			"bing": {handler.NewHandler(http.MethodGet, getBingWallpaper)},
-			"question": {
+			"login": {
+				handler.NewHandler(http.MethodPost, AuthLogin),
+			},
+			"ping": {handler.NewHandler(http.MethodGet, getPing)},
+		},
+	}
+}
+
+func QuestionHandlers() handler.HandlerGroup {
+	return handler.HandlerGroup{
+		Name: "",
+		Group: map[string][]handler.Handler{
+			"doQuestion": {
 				handler.NewHandler(http.MethodGet, getQuestion),
 				handler.NewHandler(http.MethodPost, postQuestion),
 			},
-			"ping": {handler.NewHandler(http.MethodGet, getPing)},
 		},
 	}
 }

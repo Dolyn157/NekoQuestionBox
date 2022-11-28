@@ -19,6 +19,38 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
+func TestGetUser(t *testing.T) {
+	t.Run("default", func(t *testing.T) {
+		r := require.New(t)
+		//
+		u := types.User{
+			Username: "YJSNPI",
+			Pwd:      "114514",
+		}
+		err := database.DB.Create(&u).Error
+		r.Empty(err)
+
+		//
+		defer func() {
+			err := database.DB.Model(&u).Where("username = ?", u.Username).Delete(u).Error
+			r.Empty(err)
+		}()
+
+		resp, err := GetUser("YJSNPI")
+
+		r.Equal(u.Username, resp.Username)
+		r.NotEmpty(resp.Pwd)
+		r.Empty(err)
+	})
+
+	t.Run("empty", func(t *testing.T) {
+		r := require.New(t)
+		resp, err := GetUser("YJSNPI")
+		r.Empty(resp)
+		r.NotEmpty(err)
+	})
+}
+
 func TestGetQuestions(t *testing.T) {
 	t.Run("default", func(t *testing.T) {
 		r := require.New(t)
