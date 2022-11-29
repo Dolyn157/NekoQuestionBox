@@ -5,11 +5,8 @@ import (
 	"errors"
 	"io"
 	"neko-question-box-be/internal/config"
-<<<<<<< HEAD
 	"neko-question-box-be/internal/database"
 	"neko-question-box-be/internal/database/types"
-=======
->>>>>>> origin/dev
 	"neko-question-box-be/internal/logger"
 	"neko-question-box-be/internal/middleware"
 	"neko-question-box-be/internal/services"
@@ -121,11 +118,9 @@ func postQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 		services.SendToTgChat(body.Question)
 	}
 
-<<<<<<< HEAD
 	return "问题提交成功", nil
-=======
 	return nil, nil
->>>>>>> origin/dev
+
 }
 
 // 检查服务器状态
