@@ -16,6 +16,7 @@ import (
 var (
 	ErrQuestionAnswered = errors.New("问题已经被回答过了")
 	ErrQuestionExists   = errors.New("问题已存在")
+	ErrPassWord         = errors.New("用户名或密码不正确")
 )
 
 // 获取用户信息
@@ -41,9 +42,10 @@ func GetAllQuestions() ([]types.Question, error) {
 }
 
 // 添加新问题
-func CreateNewQuestion(question string) error {
+func CreateNewQuestion(question string, username string) error {
 	err := database.DB.Create(&types.Question{
 		Question: question,
+		Username: username,
 	}).Error
 	// 已存在
 	if err != nil && strings.Contains(err.Error(), "23505") {

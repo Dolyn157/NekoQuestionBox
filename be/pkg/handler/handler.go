@@ -13,9 +13,12 @@ import (
 )
 
 var (
-	ErrParams         = NewHandlerError(http.StatusBadRequest, 40001, "params error")
-	ErrCaptcha        = NewHandlerError(http.StatusNotAcceptable, 40601, "captcha error")
-	ErrQuestionExists = NewHandlerError(http.StatusConflict, 40901, "question exists")
+	ErrParams           = NewHandlerError(http.StatusBadRequest, 40001, "params error")
+	ErrCaptcha          = NewHandlerError(http.StatusNotAcceptable, 40601, "captcha error")
+	ErrQuestionExists   = NewHandlerError(http.StatusConflict, 40901, "question exists")
+	ErrWrongPassWord    = NewHandlerError(http.StatusUnauthorized, 40401, "User Name or Password Is Incorrect")
+	ErrUserDoesNotExist = NewHandlerError(http.StatusUnauthorized, 40403, "User doesn't exist.")
+	ErrNotLogin         = NewHandlerError(http.StatusUnauthorized, 40404, "You are not login.")
 )
 
 // 创建测试用上下文

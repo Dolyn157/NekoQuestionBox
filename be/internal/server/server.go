@@ -2,6 +2,7 @@ package server
 
 import (
 	"neko-question-box-be/internal/api"
+	"neko-question-box-be/internal/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +22,7 @@ func InitServer() *gin.Engine {
 	})
 	api.OtherHandlers().Install(r.Group(""))
 	qGroup := r.Group("question")
-	qGroup.Use()
+	qGroup.Use(middleware.JwtToken)
 	api.QuestionHandlers().Install(qGroup)
 	return r
 }

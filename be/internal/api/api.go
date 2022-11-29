@@ -5,8 +5,10 @@ import (
 	"errors"
 	"io"
 	"neko-question-box-be/internal/config"
+	"neko-question-box-be/internal/database"
 	"neko-question-box-be/internal/database/types"
 	"neko-question-box-be/internal/logger"
+	"neko-question-box-be/internal/middleware"
 	"neko-question-box-be/internal/services"
 	"neko-question-box-be/pkg/handler"
 	"net/http"
@@ -20,6 +22,7 @@ type postQuestionReq struct {
 	Id       string `json:"id"`       // captcha id
 	Value    string `json:"value"`    // captcha value
 	Question string `json:"question"` // 问题
+	Username string `json:"username"` // 提问者
 }
 
 func (p postQuestionReq) isValid() bool {
@@ -87,6 +90,8 @@ func getQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 func postQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 	// 参数校验
 	body := postQuestionReq{}
+	_, MyClaims, err := middleware.ParseToken(ctx)
+	body.Username = MyClaims.Username
 	if err := ctx.Bind(&body); err != nil {
 		return nil, handler.ErrParams
 	}
@@ -98,7 +103,8 @@ func postQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 		return nil, handler.ErrCaptcha
 	}
 	// 存入问题库
-	err := services.CreateNewQuestion(body.Question)
+
+	err = services.CreateNewQuestion(body.Question, body.Username)
 	if err != nil {
 		logger.Errorf("save new question error: %s", err.Error())
 		// 问题已经存在
@@ -112,7 +118,7 @@ func postQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 		services.SendToTgChat(body.Question)
 	}
 
-	return nil, nil
+	return "问题提交成功", nil
 }
 
 // 检查服务器状态
@@ -128,8 +134,27 @@ func AuthLogin(ctx *gin.Context) (handler.HandlerResponse, error) {
 	}
 
 	//从数据库中提取用户信息。
+	resp, err := services.GetUser(userProfile.Username)
+	if err != nil {
+		if database.IsNoRecordFoundError(err) {
+			return nil, handler.ErrUserDoesNotExist
+		}
+		return nil, err
+	}
+	if userProfile.Pwd != resp.Pwd {
+		return nil, handler.ErrWrongPassWord
+	}
 
-	return nil, nil
+	//签发令牌
+	tokenString, err := middleware.IssueToken(userProfile)
+	if err != nil {
+		return nil, handler.NewHandlerError(http.StatusInternalServerError, 50001, err.Error())
+	}
+
+	// 最后，我们将客户端cookie token设置为刚刚生成的JWT
+	ctx.SetCookie("token", tokenString, 600, "/", "localhost", false, true)
+	ctx.String(http.StatusOK, "登入成功。")
+	return userProfile, nil
 }
 
 func OtherHandlers() handler.HandlerGroup {
