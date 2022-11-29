@@ -5,11 +5,8 @@ import (
 	"errors"
 	"io"
 	"neko-question-box-be/internal/config"
-<<<<<<< HEAD
 	"neko-question-box-be/internal/database"
 	"neko-question-box-be/internal/database/types"
-=======
->>>>>>> 73c1435a25c8fa64ed76d3022f7ebbe6934d1def
 	"neko-question-box-be/internal/logger"
 	"neko-question-box-be/internal/middleware"
 	"neko-question-box-be/internal/services"
@@ -121,10 +118,7 @@ func postQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 		services.SendToTgChat(body.Question)
 	}
 
-<<<<<<< HEAD
 	return "问题提交成功", nil
-=======
->>>>>>> 73c1435a25c8fa64ed76d3022f7ebbe6934d1def
 	return nil, nil
 
 }
