@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"neko-question-box-be/internal/config"
 	"neko-question-box-be/internal/database/types"
 	"net/http"
 	"time"
 )
 
-var jwtKey = []byte("my_secret_key1")
+//var jwtKey = []byte("")
 
 type Claims struct {
 	Username string `json:"username"`
@@ -36,7 +37,7 @@ func IssueToken(userProfile types.User) (string, error) {
 	// 使用用于签名的算法和令牌
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	// 创建JWT字符串
-	tokenString, err := token.SignedString(jwtKey)
+	tokenString, err := token.SignedString([]byte(config.Conf.JwtKey))
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +58,7 @@ func ParseToken(ctx *gin.Context) (*jwt.Token, *Claims, error) {
 
 	// 解析JWT字符串并将结果存储在`claims`中。
 	tkn, err := jwt.ParseWithClaims(cookie.Value, MyClaims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+		return []byte(config.Conf.JwtKey), nil
 	})
 
 	if err != nil {

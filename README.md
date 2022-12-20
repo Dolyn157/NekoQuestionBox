@@ -25,6 +25,7 @@ telegram:
   apiToken: <your-token>
   chatId: <your-chat-id>
   sendErrors: true # 遇到错误时发送给目标聊天 id
+jwtKey: <your-jwt-key> # 生成 jwt Token 时使用的签名密钥 
 ```
 字段解释：
 | 字段名 | 字段类型 | 值的范围 | 解释 |
@@ -32,6 +33,7 @@ telegram:
 | port | number | 0~65535 | 将会使用的端口 |
 | database | Database | - | 数据库配置 |
 | telegram | Telegram | - | TG Bot 配置 |
+| jwtKey | string | - | 生成 jwt Token 时使用的签名密钥 |
 
 Database 对象：
 | 字段名 | 字段类型 | 值的范围 | 解释 |

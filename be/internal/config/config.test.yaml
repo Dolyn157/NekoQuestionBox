@@ -11,3 +11,4 @@ telegram:
   apiToken:
   chatId:
   sendErrors:
+jwtKey: my_secret_key1

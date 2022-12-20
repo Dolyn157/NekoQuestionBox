@@ -30,6 +30,7 @@ type Config struct {
 	Port     int             `yaml:"port"`
 	Database *DatabaseConfig `yaml:"database"`
 	Telegram *TelegramConfig `yaml:"telegram"`
+	JwtKey   string          `yaml:"jwtKey"`
 }
 
 //go:embed config.test.yaml
@@ -64,5 +65,6 @@ func InitConfig(forTest bool) {
 	if err != nil {
 		panic(err)
 	}
+
 	logger.Infof("配置文件加载成功")
 }

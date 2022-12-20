@@ -12,7 +12,7 @@ import (
 
 func main() {
 	logger.InitLogger()
-	config.InitConfig(true)
+	config.InitConfig(false)
 	database.InitDB()
 
 	if config.Conf.Telegram.Enabled {
